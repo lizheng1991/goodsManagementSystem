@@ -31,5 +31,4 @@ const menu = [
   }
 ]
 
-
 export { menu }

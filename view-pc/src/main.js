@@ -5,10 +5,12 @@ import App from './App'
 import router from './router'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+import { http } from './http/index'
 
 Vue.use(iView)
 
 Vue.config.productionTip = false
+Vue.prototype.$http = http
 
 /* eslint-disable no-new */
 new Vue({
