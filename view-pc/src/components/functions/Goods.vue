@@ -3,21 +3,19 @@
     <div style="margin: 26px;">
         <Row>
             <Col span="8">
-              选择货品: 
-              <Select v-model="good" style="width:200px" placeholder="全部货品" @on-change="search()" clearable>
-                  <Option v-for="item in goodList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-              </Select>
+              货品名称: 
+              <Input v-model="good" placeholder="全部商品" style="width: 300px" @on-blur="search()" clearable @on-clear="search()"/>
             </Col>
-            <Col span="8">
-              选择日期: 
-              <DatePicker type="daterange" v-model="date" placeholder="所有日期" @on-change="search()" style="width: 300px"></DatePicker>
+            <Col span="8">&nbsp;
+              <!-- 选择日期: 
+              <DatePicker type="daterange" v-model="date" placeholder="所有日期" @on-change="search()" style="width: 300px"></DatePicker> -->
             </Col>
             <Col span="8" style="text-align:right">
               <Button type="primary" @click="add()">添 加</Button>
             </Col>
         </Row>
     </div>
-    <Table :data="tableData" :columns="columns" @on-sort-change="sort"></Table>
+    <Table :data="tableData" :columns="columns" @on-sort-change="sortFun"></Table>
     <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="page.total" :current="page.current" :page-size="page.size" @on-change="changePage" show-total></Page>
@@ -69,19 +67,15 @@
         data () {
             return {
                 good: '',
-                goodList: [{ // 货品列表
-                  label: 'lz',
-                  value: 1
-                },{
-                  label: 'lajimo',
-                  value: 2
-                }],
-                date: [],
+                sort: {
+                    key: '',
+                    order: ''
+                },
                 spinShow: false, // loading
                 page:{
-                  total: 100,
+                  total: 0,
                   current: 1,
-                  size: 20
+                  size: 10
                 },
                 auth: 'admin',
                 formState: '', // 表单状态 add:新建，edit:编辑，detail:查看
@@ -93,6 +87,7 @@
                     position: 'static'
                 },
                 formDataInit: { // 表单初始值
+                    id:0,
                     name: '',
                     count: 0,
                     unit: '',
@@ -100,54 +95,6 @@
                 },
                 formData: {}, // 表单初始化
                 tableData: [
-                    {
-                        name: 'John Brown',
-                        age: 18,
-                        address: 'New York No. 1 Lake Park',
-                        date: '2016-10-03'
-                    },
-                    {
-                        name: 'Jim Green',
-                        age: 24,
-                        address: 'London No. 1 Lake Park',
-                        date: '2016-10-01'
-                    },
-                    {
-                        name: 'Joe Black',
-                        age: 30,
-                        address: 'Sydney No. 1 Lake Park',
-                        date: '2016-10-02'
-                    },
-                    {
-                        name: 'Jon Snow',
-                        age: 26,
-                        address: 'Ottawa No. 2 Lake Park',
-                        date: '2016-10-04'
-                    },
-                    {
-                        name: 'John Brown',
-                        age: 18,
-                        address: 'New York No. 1 Lake Park',
-                        date: '2016-10-03'
-                    },
-                    {
-                        name: 'Jim Green',
-                        age: 24,
-                        address: 'London No. 1 Lake Park',
-                        date: '2016-10-01'
-                    },
-                    {
-                        name: 'Joe Black',
-                        age: 30,
-                        address: 'Sydney No. 1 Lake Park',
-                        date: '2016-10-02'
-                    },
-                    {
-                        name: 'Jon Snow',
-                        age: 26,
-                        address: 'Ottawa No. 2 Lake Park',
-                        date: '2016-10-04'
-                    }
                 ],
                 columns: [
                   {
@@ -156,13 +103,21 @@
                       align: 'center'
                   },
                   {
-                      title: 'Name',
+                      title: '名称',
                       key: 'name'
                   },
                   {
-                    title: 'Age',
-                    key: 'age',
+                    title: '数量',
+                    key: 'count',
                     sortable: true
+                  },
+                  {
+                    title: '单位',
+                    key: 'unit'
+                  },
+                  {
+                    title: '备注',
+                    key: 'remark'
                   },
                   {
                     title: '操作',
@@ -179,7 +134,7 @@
                               },
                               on: {
                                   click: () => {
-                                      this.detail(params.row)
+                                      this.detail(params.row.id)
                                   }
                               }
                           }, '查看'),
@@ -194,7 +149,7 @@
                               },
                               on: {
                                   click: () => {
-                                      this.edit(params.row)
+                                      this.edit(params.row.id)
                                   }
                               }
                           }, '修改'),
@@ -206,7 +161,7 @@
                               },
                               on: {
                                   click: () => {
-                                      this.remove(params.row)
+                                      this.remove(params.row.id)
                                   }
                               }
                           }, '删除')
@@ -216,25 +171,45 @@
                 ]
             }
         },
+        mounted(){
+            this.search();
+        },
         computed: {
         },
         methods:{
-          sort(data) {
-            console.log(data)
+          sortFun(data) {
+            this.sort = {
+                key: data.key,
+                order: data.desc
+            }
           },
           changePage(index) {
             this.page.current = index;
             this.search();
           },
           search() {
-            console.log(this.good,this.date,this.page)
+            const params = {
+                data: {
+                    name: this.good,
+                    date: this.date,
+                    sort: this.sort
+                },
+                page: this.page
+            }
+            this.$http.getGoodList(params).then((result)=>{
+                if(result.data) {
+                    this.tableData = result.data.list;
+                    this.page = result.data.page
+                }
+            });
           },
-          detail(row) {
+          detail(id) {
             this.formState = 'detail';
-            console.log(row)
-            this.$http.getGoodDetail(1).then((result)=>{
+            this.$http.getGoodDetail(id).then((result)=>{
+                if(result.data && result.data.length) {
+                    this.formData = result.data[0];
+                }
                 this.showDrawer = true;
-                console.log(result);
             });
           },
           add() {
@@ -242,21 +217,34 @@
             this.formData = JSON.parse(JSON.stringify(this.formDataInit));
             this.showDrawer = true;
           },
-          edit(row) {
+          edit(id) {
+            this.formData.id = id;
             this.formState = 'edit';
-            console.log(row)
-            this.showDrawer = true;
+            this.$http.getGoodDetail(id).then((result)=>{
+                if(result.data && result.data.length) {
+                    this.formData = result.data[0];
+                }
+                this.showDrawer = true;
+            });
           },
-          remove(row) {
-            console.log(row)
+          remove(id) {
+            this.$http.deleteGood(id).then((result)=>{
+                if(result) {
+                    this.search();
+                }
+            });
           },
           submit() {
             if(this.formState === 'add') {
-              this.$http.addGood(this.formData).then((result)=>{
-                this.showDrawer = false;
-                console.log(result);
-              });
+                this.$http.addGood(this.formData).then((result)=>{
+                    this.showDrawer = false;
+                    this.search();
+                });
             } else if(this.formState === 'edit') {
+                this.$http.editGood(this.formData).then((result)=>{
+                    this.showDrawer = false;
+                    this.search();
+                });
             }
           }
         }

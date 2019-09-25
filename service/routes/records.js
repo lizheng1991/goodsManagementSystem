@@ -1,12 +1,12 @@
 const router = require('koa-router')()
 const userService = require('../mysql/mysqlConfig');
 
-router.prefix('/goods')
+router.prefix('/records')
 
 router.get('/', function (ctx, next) {
   ctx.body = 'this is a users response!'
 })
-// 获取货品列表
+// 获取出入库记录列表
 router.post('/list', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.getGoodList(rb)
@@ -21,10 +21,13 @@ router.post('/list', async (ctx, next) => {
         }
     })
 })
-// 获取货品名称列表
-router.get('/namelist', async (ctx, next) => {
-  await userService.getGoodNameList()
+
+// 入库
+router.post('/import', async (ctx, next) => {
+  const rb = ctx.request.body
+  await userService.import(rb)
     .then((data) => {
+        console.log(data)
         ctx.body = {
             data: data
         }
@@ -34,40 +37,26 @@ router.get('/namelist', async (ctx, next) => {
         }
     })
 })
-// 获取货品详情
-router.get('/detail/:id', async (ctx, next) => {
-  await userService.getGoodDetail(ctx.params.id)
-    .then((data) => {
-        console.log(data)
-        ctx.body = {
-            data: data
-        }
-    }).catch(() => {
-        ctx.body = {
-            data: 'err'
-        }
-    })
-})
-// 添加货品
-router.post('/add', async (ctx, next) => {
-  const rb = ctx.request.body
-  await userService.addGood(rb)
-    .then((data) => {
-        console.log(data)
-        ctx.body = {
-            data: data
-        }
-    }).catch((err) => {
-      console.log(err)
-        ctx.body = {
-            data: 'err'
-        }
-    })
-})
+// 出库
+router.post('/export', async (ctx, next) => {
+    const rb = ctx.request.body
+    await userService.export(rb)
+      .then((data) => {
+          console.log(data)
+          ctx.body = {
+              data: data
+          }
+      }).catch((err) => {
+        console.log(err)
+          ctx.body = {
+              data: 'err'
+          }
+      })
+  })
 // 修改货品
 router.put('/update', async (ctx, next) => {
   const rb = ctx.request.body
-  await userService.updateGood(rb)
+  await userService.update(rb)
     .then((data) => {
         console.log(data)
         ctx.body = {
@@ -83,7 +72,7 @@ router.put('/update', async (ctx, next) => {
 
 // 删除货品
 router.delete('/delete/:id', async (ctx, next) => {
-  await userService.deleteGood(ctx.params.id)
+  await userService.delete(ctx.params.id)
     .then((data) => {
         console.log(data)
         ctx.body = {
