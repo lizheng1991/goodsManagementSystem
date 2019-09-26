@@ -22,7 +22,7 @@ router.post('/list', async (ctx, next) => {
     })
 })
 
-// 入库
+// 出入库
 router.post('/import', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.import(rb)
@@ -37,22 +37,6 @@ router.post('/import', async (ctx, next) => {
         }
     })
 })
-// 出库
-router.post('/export', async (ctx, next) => {
-    const rb = ctx.request.body
-    await userService.export(rb)
-      .then((data) => {
-          console.log(data)
-          ctx.body = {
-              data: data
-          }
-      }).catch((err) => {
-        console.log(err)
-          ctx.body = {
-              data: 'err'
-          }
-      })
-  })
 // 修改货品
 router.put('/update', async (ctx, next) => {
   const rb = ctx.request.body

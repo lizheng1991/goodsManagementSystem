@@ -1,26 +1,25 @@
 <template>
   <div style="margin:20px;">
     <div class="row">
-        <div class="row-l">名 称:</div>
+        <div class="row-l">货 品:</div>
         <div class="row-r"><AutoComplete
         v-model="name"
         :data="nameList"
-        @on-search="searchName"
         placeholder=""
         style="width:300px"></AutoComplete></div>
     </div>
     <div class="row">
         <div class="row-l">数 量:</div>
-        <div class="row-r"><Input v-model="num" type="number" placeholder="" style="width:300px" /></div>
+        <div class="row-r"><Input v-model="count" type="number" placeholder="" style="width:300px" /></div>
     </div>
     <div class="row">
         <div class="row-l">日 期:</div>
-        <div class="row-r"><DatePicker type="date" v-model="date" placeholder="" style="width: 300px"></DatePicker></div>
+        <div class="row-r"><DatePicker type="date" v-model="createdate" placeholder="" style="width: 300px"></DatePicker></div>
     </div>
     <div class="row">
         <div class="row-l">备 注:</div>
         <div class="row-r">
-          <Input v-model="text" type="textarea" :rows="3" placeholder="" style="width:300px" />
+          <Input v-model="remark" type="textarea" :rows="3" placeholder="" style="width:300px" />
         </div>
     </div>
     <div class="row">
@@ -34,22 +33,54 @@
 
 <script>
 export default {
-  name: 'Export',
+  name: 'Import',
   data () {
     return {
       name: '',
-      num: 0,
-      date: '',
-      text: '',
-      nameList: ['lz1', 'lz2']
+      count: 0,
+      createdate: '',
+      remark: '',
+      goodList:[]
     }
   },
+  computed:{
+    nameList(){
+      let result = [];
+      if (!this.goodList) return result;
+      this.goodList.forEach((item) => {
+        if(item.name.indexOf(this.name) >= 0) {
+          result.push(item.name)
+        }
+      });
+      return result;
+    }
+  },
+  mounted(){
+    this.$http.getGoodNameList().then((result)=>{
+        if(result.data) {
+            this.goodList = result.data;
+        }
+    });
+  },
   methods: {
-    searchName(name) {
-      console.log(name)
-    },
     submit() {
-      console.log('name:'+this.name,'num:'+this.num,'date:'+this.date,'text:'+this.text)
+      let goodId = 0;
+      let params;
+      this.goodList.forEach((item) => {
+        if(item.name === this.name) {
+          goodId = item.id;
+        }
+      });
+      params = {
+        user_id: 1,
+        good_id: goodId,
+        count: this.count * -1,
+        remark: this.remark,
+        createdate: new Date(this.createdate).getTime()
+      }
+      this.$http.import(params).then((result) => {
+        console.log(result)
+      })
     }
   }
 }
