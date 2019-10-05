@@ -2,15 +2,15 @@
   <div style="position:relative">
     <div style="margin: 26px;">
         <Row>
-            <Col span="8">
+            <Col span="10">
               货品名称: 
               <Input v-model="good" placeholder="全部商品" style="width: 300px" @on-blur="search()" clearable @on-clear="search()"/>
             </Col>
-            <Col span="8">&nbsp;
+            <Col span="10">&nbsp;
               <!-- 选择日期: 
               <DatePicker type="daterange" v-model="date" placeholder="所有日期" @on-change="search()" style="width: 300px"></DatePicker> -->
             </Col>
-            <Col span="8" style="text-align:right">
+            <Col span="4" style="text-align:right">
               <Button type="primary" @click="add()">添 加</Button>
             </Col>
         </Row>

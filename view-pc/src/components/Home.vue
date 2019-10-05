@@ -19,18 +19,28 @@
     margin: 0 auto;
     margin-right: 20px;
 }
-.ivu-layout{
-    height:100vh;
+.content{
+    overflow-x: auto;
+    height: calc(100vh - 64px);
 }
 .ivu-layout-sider{
     background: #515a6e;
     padding-top: 50px;
 }
+.header-box{
+    line-height: 64px;
+    font-size: 18px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+}
 </style>
 <template>
     <div class="layout">
         <Layout>
-            <Header>
+            <Header :style="{background:'#464f64'}">
+                <div class="header-box">
+                    货品管理系统
+                </div>
             </Header>
             <Layout>
                 <Sider hide-trigger>
@@ -38,7 +48,7 @@
                       <MenuItem v-for="item in menu" :key="item.name" :name="item.name" :to="item.url">{{item.label}}</MenuItem>
                     </Menu>
                 </Sider>
-                <Layout :style="{padding: '0 24px 24px'}">
+                <Layout class="content" :style="{padding: '0 24px 24px'}">
                     <Content>
                         <router-view/>
                     </Content>

@@ -3,6 +3,7 @@
   * 请求拦截、响应拦截、错误统一处理
   */
 import axios from 'axios';
+import bus from '../bus/bus.js'
 //  import router from '../router';
 //  import store from '../store/index';
 //  import { Toast } from 'vant';
@@ -86,7 +87,21 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   // 请求成功
-  res => res.status === 200 ? Promise.resolve(res.data) : Promise.reject(res),
+  res => {
+    if (res.status === 200) {
+      if (!res.data.success) {
+        bus.$Message.error(res.data.text)
+        return Promise.reject(res)
+      } else {
+        if (res.data.text) {
+          bus.$Message.success(res.data.text)
+        }
+        return Promise.resolve(res.data)
+      }
+    } else {
+      return Promise.reject(res)
+    }
+  },
   // 请求失败
   error => {
     const { response } = error;

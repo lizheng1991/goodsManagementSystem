@@ -11,13 +11,13 @@ router.post('/list', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.getGoodList(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
+            success: true,
             data: data
         }
     }).catch((err) => {
         ctx.body = {
-            data: err
+            text: '查询失败！'
         }
     })
 })
@@ -26,11 +26,12 @@ router.get('/namelist', async (ctx, next) => {
   await userService.getGoodNameList()
     .then((data) => {
         ctx.body = {
+            success: true,
             data: data
         }
     }).catch((err) => {
         ctx.body = {
-            data: err
+            text: '获取货品名称列表失败！'
         }
     })
 })
@@ -38,13 +39,13 @@ router.get('/namelist', async (ctx, next) => {
 router.get('/detail/:id', async (ctx, next) => {
   await userService.getGoodDetail(ctx.params.id)
     .then((data) => {
-        console.log(data)
         ctx.body = {
+            success: true,
             data: data
         }
     }).catch(() => {
         ctx.body = {
-            data: 'err'
+            text: '获取货品详情失败！'
         }
     })
 })
@@ -53,14 +54,13 @@ router.post('/add', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.addGood(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            success: true,
+            text: '添加成功！'
         }
     }).catch((err) => {
-      console.log(err)
         ctx.body = {
-            data: 'err'
+            text: '添加失败！'
         }
     })
 })
@@ -69,14 +69,13 @@ router.put('/update', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.updateGood(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            success: true,
+            text: '修改成功！'
         }
     }).catch((err) => {
-      console.log(err)
         ctx.body = {
-            data: 'err'
+            text: '修改失败！'
         }
     })
 })
@@ -85,14 +84,12 @@ router.put('/update', async (ctx, next) => {
 router.delete('/delete/:id', async (ctx, next) => {
   await userService.deleteGood(ctx.params.id)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            text: '删除成功！'
         }
     }).catch((err) => {
-      console.log(err)
         ctx.body = {
-            data: 'err'
+            text: '删除失败！'
         }
     })
 })

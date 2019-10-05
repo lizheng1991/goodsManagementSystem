@@ -11,13 +11,13 @@ router.post('/list', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.getGoodList(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
+            success: true,
             data: data
         }
     }).catch((err) => {
         ctx.body = {
-            data: err
+            text: '查询失败！'
         }
     })
 })
@@ -27,13 +27,13 @@ router.post('/import', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.import(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            success: true,
+            text: '提交成功！'
         }
     }).catch((err) => {
         ctx.body = {
-            data: err
+            text: '提交失败！'
         }
     })
 })
@@ -42,14 +42,13 @@ router.put('/update', async (ctx, next) => {
   const rb = ctx.request.body
   await userService.update(rb)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            success: true,
+            text: '修改成功！'
         }
     }).catch((err) => {
-      console.log(err)
         ctx.body = {
-            data: 'err'
+            text: '修改失败！'
         }
     })
 })
@@ -58,14 +57,13 @@ router.put('/update', async (ctx, next) => {
 router.delete('/delete/:id', async (ctx, next) => {
   await userService.delete(ctx.params.id)
     .then((data) => {
-        console.log(data)
         ctx.body = {
-            data: data
+            success: true,
+            text: '删除成功！'
         }
     }).catch((err) => {
-      console.log(err)
         ctx.body = {
-            data: 'err'
+            text: '删除失败！'
         }
     })
 })

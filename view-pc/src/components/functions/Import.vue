@@ -66,11 +66,19 @@ export default {
     submit() {
       let goodId = 0;
       let params;
+      let msg = '';
       this.goodList.forEach((item) => {
         if(item.name === this.name) {
           goodId = item.id;
         }
       });
+      if (!goodId){ msg = '请选择货品！'}
+      if (!(this.count && this.count > 0)){ msg = '请输入正确数量！'}
+      if (!this.createdate){ msg = '请选择日期！'}
+      if (msg){
+        this.$Message.error(msg)
+        return false;
+      }
       params = {
         user_id: 1,
         good_id: goodId,
@@ -79,7 +87,11 @@ export default {
         createdate: new Date(this.createdate).getTime()
       }
       this.$http.import(params).then((result) => {
-        console.log(result)
+        this.name= '';
+        this.count= 0;
+        this.createdate= '';
+        this.remark= '';
+        this.goodList= [];
       })
     }
   }
