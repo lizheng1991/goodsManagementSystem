@@ -17,7 +17,8 @@ router.post('/list', async (ctx, next) => {
         }
     }).catch((err) => {
         ctx.body = {
-            text: '查询失败！'
+            text: '查询失败！',
+            data: err
         }
     })
 })
@@ -85,6 +86,7 @@ router.delete('/delete/:id', async (ctx, next) => {
   await userService.deleteGood(ctx.params.id)
     .then((data) => {
         ctx.body = {
+            success: true,
             text: '删除成功！'
         }
     }).catch((err) => {

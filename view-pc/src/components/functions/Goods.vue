@@ -4,7 +4,7 @@
         <Row>
             <Col span="10">
               货品名称: 
-              <Input v-model="good" placeholder="全部商品" style="width: 300px" @on-blur="search()" clearable @on-clear="search()"/>
+              <Input v-model="good" placeholder="全部商品" style="width: 300px" @on-enter="search()" @on-blur="search()" clearable @on-clear="search()"/>
             </Col>
             <Col span="10">&nbsp;
               <!-- 选择日期: 
@@ -109,7 +109,7 @@
                   {
                     title: '数量',
                     key: 'count',
-                    sortable: true
+                    sortable: 'custom'
                   },
                   {
                     title: '单位',
@@ -177,76 +177,100 @@
         computed: {
         },
         methods:{
-          sortFun(data) {
-            this.sort = {
-                key: data.key,
-                order: data.desc
-            }
-          },
-          changePage(index) {
-            this.page.current = index;
-            this.search();
-          },
-          search() {
-            const params = {
-                data: {
-                    name: this.good,
-                    date: this.date,
-                    sort: this.sort
-                },
-                page: this.page
-            }
-            this.$http.getGoodList(params).then((result)=>{
-                if(result.data) {
-                    this.tableData = result.data.list;
-                    this.page = result.data.page
+            // 排序参数
+            sortFun(data) {
+                this.sort = {
+                    key: data.key,
+                    order: data.order
                 }
-            });
-          },
-          detail(id) {
-            this.formState = 'detail';
-            this.$http.getGoodDetail(id).then((result)=>{
-                if(result.data && result.data.length) {
-                    this.formData = result.data[0];
+                this.search();
+            },
+            // 切换页码
+            changePage(index) {
+                this.page.current = index;
+                this.search();
+            },
+            // 搜索
+            search() {
+                const params = {
+                    data: {
+                        name: this.good,
+                        date: this.date,
+                        sort: this.sort
+                    },
+                    page: this.page
                 }
-                this.showDrawer = true;
-            });
-          },
-          add() {
-            this.formState = 'add';
-            this.formData = JSON.parse(JSON.stringify(this.formDataInit));
-            this.showDrawer = true;
-          },
-          edit(id) {
-            this.formData.id = id;
-            this.formState = 'edit';
-            this.$http.getGoodDetail(id).then((result)=>{
-                if(result.data && result.data.length) {
-                    this.formData = result.data[0];
-                }
-                this.showDrawer = true;
-            });
-          },
-          remove(id) {
-            this.$http.deleteGood(id).then((result)=>{
-                if(result) {
-                    this.search();
-                }
-            });
-          },
-          submit() {
-            if(this.formState === 'add') {
-                this.$http.addGood(this.formData).then((result)=>{
-                    this.showDrawer = false;
-                    this.search();
+                this.$http.getGoodList(params).then((result)=>{
+                    if(result.data) {
+                        this.tableData = result.data.list;
+                        this.page = result.data.page
+                    }
                 });
-            } else if(this.formState === 'edit') {
-                this.$http.editGood(this.formData).then((result)=>{
-                    this.showDrawer = false;
-                    this.search();
+            },
+            // 查看
+            detail(id) {
+                this.formState = 'detail';
+                this.$http.getGoodDetail(id).then((result)=>{
+                    if(result.data && result.data.length) {
+                        this.formData = result.data[0];
+                    }
+                    this.showDrawer = true;
                 });
+            },
+            // 新建
+            add() {
+                this.formState = 'add';
+                this.formData = JSON.parse(JSON.stringify(this.formDataInit));
+                this.showDrawer = true;
+            },
+            // 编辑
+            edit(id) {
+                this.formData.id = id;
+                this.formState = 'edit';
+                this.$http.getGoodDetail(id).then((result)=>{
+                    if(result.data && result.data.length) {
+                        this.formData = result.data[0];
+                    }
+                    this.showDrawer = true;
+                });
+            },
+            // 删除
+            remove(id) {
+                let that = this;
+                this.$Modal.confirm({
+                    title: '提示',
+                    content: '确认删除此货品？',
+                    onOk: function(){
+                        that.$http.deleteGood(id).then((result)=>{
+                            if(result) {
+                                that.search();
+                            }
+                        });
+                    }
+                });
+            },
+            // 提交
+            submit() {
+                let msg = '';
+                if (!this.formData.name){ msg = '请填写货品！'}
+                if (!this.formData.count){ msg = '请填写初始数量！'}
+                if (!this.formData.unit){ msg = '请填写货品单位！'}
+                if (msg){
+                    this.$Message.error(msg)
+                    return false;
+                }
+                if(this.formState === 'add') {
+                    this.$http.addGood(this.formData).then((result)=>{
+                        this.showDrawer = false;
+                        this.search();
+                    });
+                } else if(this.formState === 'edit') {
+                    this.$http.editGood(this.formData).then((result)=>{
+                        this.showDrawer = false;
+                        this.search();
+                    });
+                }
             }
-          }
         }
     }
 </script>

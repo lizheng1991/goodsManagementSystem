@@ -31,10 +31,19 @@ const http = {
     return axios.delete(`${base.api}/goods/delete/${id}`);
   },
 
-  // 入库
+  // 出入库
   import (params) {
     return axios.post(`${base.api}/records/import`, params);
-  }
+  },
+  // 出入库记录
+  getRecordList (params) {
+    return axios.post(`${base.api}/records/list`, params);
+  },
+
+  // 获取人员名称列表
+  getUserNameList () {
+    return axios.get(`${base.api}/users/namelist`);
+  },
 }
 
 export { http }

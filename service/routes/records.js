@@ -9,7 +9,7 @@ router.get('/', function (ctx, next) {
 // 获取出入库记录列表
 router.post('/list', async (ctx, next) => {
   const rb = ctx.request.body
-  await userService.getGoodList(rb)
+  await userService.getRecordList(rb)
     .then((data) => {
         ctx.body = {
             success: true,
@@ -17,6 +17,7 @@ router.post('/list', async (ctx, next) => {
         }
     }).catch((err) => {
         ctx.body = {
+            data: err,
             text: '查询失败！'
         }
     })
@@ -34,36 +35,6 @@ router.post('/import', async (ctx, next) => {
     }).catch((err) => {
         ctx.body = {
             text: '提交失败！'
-        }
-    })
-})
-// 修改货品
-router.put('/update', async (ctx, next) => {
-  const rb = ctx.request.body
-  await userService.update(rb)
-    .then((data) => {
-        ctx.body = {
-            success: true,
-            text: '修改成功！'
-        }
-    }).catch((err) => {
-        ctx.body = {
-            text: '修改失败！'
-        }
-    })
-})
-
-// 删除货品
-router.delete('/delete/:id', async (ctx, next) => {
-  await userService.delete(ctx.params.id)
-    .then((data) => {
-        ctx.body = {
-            success: true,
-            text: '删除成功！'
-        }
-    }).catch((err) => {
-        ctx.body = {
-            text: '删除失败！'
         }
     })
 })
