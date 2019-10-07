@@ -22,6 +22,20 @@ router.post('/list', async (ctx, next) => {
         }
     })
 })
+// 获取货品详情
+router.get('/detail/:id', async (ctx, next) => {
+    await userService.getRecordDetail(ctx.params.id)
+      .then((data) => {
+          ctx.body = {
+              success: true,
+              data: data
+          }
+      }).catch(() => {
+          ctx.body = {
+              text: '获取记录详情失败！'
+          }
+      })
+})
 
 // 出入库
 router.post('/import', async (ctx, next) => {

@@ -53,6 +53,9 @@ export default {
         }
       });
       return result;
+    },
+    userId(){
+      return this.$store.state.user.id;
     }
   },
   mounted(){
@@ -80,7 +83,7 @@ export default {
         return false;
       }
       params = {
-        user_id: 1,
+        user_id: this.userId,
         good_id: goodId,
         count: this.count * -1,
         remark: this.remark,

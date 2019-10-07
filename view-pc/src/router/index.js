@@ -8,10 +8,11 @@ import Import from '../components/functions/Import'
 import Export from '../components/functions/Export'
 import User from '../components/functions/User'
 import Excel from '../components/functions/Excel'
+import store from '../store/index.js'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -28,34 +29,67 @@ export default new Router({
         {
           path: 'goods',
           name: 'goods',
-          component: Goods
+          component: Goods,
+          meta: {
+            auth: true
+          }
         },
         {
           path: 'records',
           name: 'records',
-          component: Records
+          component: Records,
+          meta: {
+            auth: true
+          }
         },
         {
           path: 'import',
           name: 'import',
-          component: Import
+          component: Import,
+          meta: {
+            auth: true
+          }
         },
         {
           path: 'export',
           name: 'export',
-          component: Export
+          component: Export,
+          meta: {
+            auth: true
+          }
         },
         {
           path: 'user',
           name: 'user',
-          component: User
+          component: User,
+          meta: {
+            auth: true
+          }
         },
         {
           path: 'excel',
           name: 'excel',
-          component: Excel
+          component: Excel,
+          meta: {
+            auth: true
+          }
         }
       ]
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.auth) {
+    let auth = store.getters.auth;
+    if(auth) {
+      next();
+    } else {
+      next('/login');
+    }
+  } else {
+    next();
+  }
+})
+
+export default router

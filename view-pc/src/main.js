@@ -6,16 +6,22 @@ import router from './router'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import { http } from './http/index'
+import store from './store/index.js'
 
 Vue.use(iView)
 
 Vue.config.productionTip = false
 Vue.prototype.$http = http
 
+let userInfo = localStorage.good_user_info;
+if(userInfo) {
+  store.commit('login',JSON.parse(userInfo));
+}
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

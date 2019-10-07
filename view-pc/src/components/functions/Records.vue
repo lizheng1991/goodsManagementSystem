@@ -49,11 +49,13 @@
         <Form :model="formData">
             <Row :gutter="32">
                 <Col span="12">
-                    
+                    <FormItem label="货品名称" label-position="top">
+                        <Input v-model="formData.good_name" :readonly="formState==='detail'" placeholder="请输入货品名称..." />
+                    </FormItem>
                 </Col>
                 <Col span="12">
                     <FormItem label="出入库人员" label-position="top">
-                        <Input v-model="formData.userName" type="number" :readonly="formState==='detail'" placeholder="请输入出入库人员..." />
+                        <Input v-model="formData.user_name" :readonly="formState==='detail'" placeholder="请输入出入库人员..." />
                     </FormItem>
                 </Col>
             </Row>
@@ -153,8 +155,12 @@
                   },
                   {
                     title: '日期',
-                    key: 'date',
-                    sortable: 'custom'
+                    key: 'createdate',
+                    sortable: 'custom',
+                    render: (h, params) => {
+                      let time = new Date(Number(params.row.createdate));
+                      return h('div',{},time.toLocaleDateString());
+                    }
                   },
                   {
                     title: '备注',
@@ -295,9 +301,10 @@
             // 查看
             detail(id) {
                 this.formState = 'detail';
-                this.$http.getGoodDetail(id).then((result)=>{
+                this.$http.getRecordDetail(id).then((result)=>{
                     if(result.data && result.data.length) {
                         this.formData = result.data[0];
+                        this.formData.createdate = new Date(Number(this.formData.createdate));
                     }
                     this.showDrawer = true;
                 });

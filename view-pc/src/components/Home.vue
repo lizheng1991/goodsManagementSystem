@@ -32,6 +32,20 @@
     font-size: 18px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #fff;
+    display:flex;
+    justify-content: space-between;
+}
+.dropdown{
+    line-height:24px;
+    font-size:12px;
+    color:#333;
+}
+.dropdown div{
+    margin:0 14px;
+}
+.dropdown .unlogin{
+    color:#2d8cf0;
+    cursor: pointer;
 }
 </style>
 <template>
@@ -39,7 +53,20 @@
         <Layout>
             <Header :style="{background:'#464f64'}">
                 <div class="header-box">
+                    <div class="header-left">
                     货品管理系统
+                    </div>
+                    <div class="header-right">
+                        <Dropdown>
+                            <a href="javascript:void(0)">
+                                <Avatar icon="ios-person" />
+                            </a>
+                            <div slot="list" class="dropdown">
+                                <div class="user">欢迎 {{user.name}}!</div>
+                                <div class="unlogin" @click="unlogin()">退出登录</div>
+                            </div>
+                        </Dropdown>
+                    </div>
                 </div>
             </Header>
             <Layout>
@@ -68,13 +95,30 @@ export default {
       menu: menu
     }
   },
+  computed:{
+      user(){
+          return this.$store.state.user
+      }
+  },
   watch:{
     // '$route'(to, from) {
-
+        
     // }
   },
   methods: {
-      
+      unlogin(){
+            this.$store.commit('unlogin');
+            localStorage.removeItem('good_user_info');
+            this.$router.push('/login');
+      }
+  },
+  mounted(){
+        let path = this.$route.path;
+        this.menu.forEach(item => {
+            if(item.url === path) {
+                this.currentMenu = item.name;
+            }
+        });
   }
 }
 </script>
