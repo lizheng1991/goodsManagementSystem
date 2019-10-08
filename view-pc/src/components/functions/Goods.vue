@@ -77,7 +77,6 @@
                   current: 1,
                   size: 10
                 },
-                auth: 'admin',
                 formState: '', // 表单状态 add:新建，edit:编辑，detail:查看
                 showDrawer: false, // 抽屉显隐
                 styles: {
@@ -123,7 +122,7 @@
                     title: '操作',
                     key: 'operation',
                     render: (h, params) => {
-                      const showButton = this.auth !== 'admin';
+                      const notManager = !this.isManager;
                       return h('div', [
                           h('Button', {
                               props: {
@@ -142,7 +141,7 @@
                               props: {
                                   type: 'primary',
                                   size: 'small',
-                                  disabled: showButton
+                                  disabled: notManager
                               },
                               style: {
                                   marginRight: '5px'
@@ -157,7 +156,7 @@
                               props: {
                                   type: 'error',
                                   size: 'small',
-                                  disabled: showButton
+                                  disabled: notManager
                               },
                               on: {
                                   click: () => {
@@ -175,6 +174,9 @@
             this.search();
         },
         computed: {
+            isManager(){
+                return this.$store.state.user.role === 1;
+            }
         },
         methods:{
             // 排序参数

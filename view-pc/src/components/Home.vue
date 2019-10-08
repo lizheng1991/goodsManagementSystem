@@ -98,6 +98,9 @@ export default {
   computed:{
       user(){
           return this.$store.state.user
+      },
+      isManager(){
+          return this.$store.state.user.role === 1;
       }
   },
   watch:{
@@ -113,12 +116,19 @@ export default {
       }
   },
   mounted(){
+        // 回显菜单当前项
         let path = this.$route.path;
         this.menu.forEach(item => {
             if(item.url === path) {
                 this.currentMenu = item.name;
             }
         });
+        // 处理角色
+        if(!this.isManager) {
+            this.menu = menu.filter(item=>{
+              return item.show;
+          })
+        }
   }
 }
 </script>
