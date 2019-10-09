@@ -1,5 +1,5 @@
 # goodsManageSystem
-用于仓库货品管理的库管系统，包括前端，后端，数据库（VUE + Node + MYSQL）
+> 用于仓库货品管理的库管系统，包括前端，后端，数据库（VUE + Koa2 + MYSQL）
 
 ## 项目主要功能
 * 登录
@@ -11,24 +11,24 @@
 
 ## 主项目结构
 ├── view-pc // 前端项目（VUE）  
-├── service // 服务端项目（Node）  
+├── service // 服务端项目（Koa2）  
 └── database // 数据库（MYSQL） 
 
 ## 前端项目 
 ### 技术栈
-VUE + vue-router + vuex + axios + iview
+> VUE + vue-router + vuex + axios + iview
 ### 项目详细Readme
 [https://github.com/lizheng1991/goodsManagementSystem/blob/master/view-pc/README.md](https://github.com/lizheng1991/goodsManagementSystem/blob/master/view-pc/README.md)
 
 ## 后端项目
 ### 技术栈
-Node.js + Koa2
+> Node.js + Koa2
 ### 项目详细Readme
 [https://github.com/lizheng1991/goodsManagementSystem/blob/master/service/README.md](https://github.com/lizheng1991/goodsManagementSystem/blob/master/service/README.md)
 
 ## 数据库
 ### 技术栈
-MYSQL
+> MYSQL
 ### 文件结构
 ├── goods.sql // 货品信息表  
 ├── records.sql // 出入库记录信息表  
